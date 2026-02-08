@@ -1,195 +1,131 @@
-# GFX Framework
+# Arcade Machine – Custom 2D Game Project (C++ & OpenGL)
 
-## :sparkles: Introduction
+> A modular 2D game built from scratch in **C++ using OpenGL**, featuring an interactive **spaceship editor**, custom geometry generation, and a **Breakout-style arcade game**.
 
-This project is a tiny graphics framework used by the Computer Graphics Department of the Polytechnic University of Bucharest.
-It is currently used as teaching and study material for a number of courses of increasing complexity, including, but not limited to:
+> This is not a tutorial project — it is a complete interactive system implemented without a game engine.
+---
 
--   **`EGC`** Elements of Computer Graphics, BSc year 3 &mdash; [course materials (RO)](https://ocw.cs.pub.ro/courses/egc)
--   **`PGAPI`** Advanced Graphics Programming and Image Processing, BSc year 4 &mdash; [course materials (RO)](https://ocw.cs.pub.ro/courses/pgapi)
+## Project Overview
 
-The functionality is split into several modules of increasing difficulty (`m1`, `m2`, etc.).
+This project demonstrates low-level **graphics programming**, **game logic**, and **system design** through a complete 2D game pipeline.  
+Players design their own spaceship using an editor, validate it through strict constraints, and then use it as the paddle in a Breakout-inspired game.
 
-You can read more about it [in the docs](docs/home.md).
+---
 
-It has missing and closed-source functionality that you will need to implement.
+## Key Features
 
-The code is cross-platform, and supports the following architectures:
+- Interactive **drag & drop spaceship editor**
+- Grid-based construction with real-time validation
+- DFS-based connectivity check
+- Breakout-style gameplay with physics-inspired collisions
+- Brick durability & destruction animation
+- Custom 2D geometry (no external shape libraries)
+- Modular and extensible architecture
 
--   Windows: `i686`, `x86_64`, `arm64`
--   Linux: `i686`, `x86_64`, `arm64`
--   macOS: `x86_64`, `arm64`
+---
 
+## Spaceship Editor
 
-## :white_check_mark: Prerequisites
+The game starts in an **editor mode** where the player designs a spaceship on a **17×9 grid**, using a maximum of **10 components**.
 
-This section describes ***what you need to do and install*** before actually building the code.
+### Components
+| Component | Description |
+|---------|------------|
+| Solid Block | Basic structural unit |
+| Engine | Movement-related component |
+| Gun | Vertical extension component |
+| Bumper | Defensive component |
 
+### Editor Features
+- Drag & drop placement
+- Right-click removal
+- Remaining components counter
+- Start button with live validity feedback
 
-### Install a compiler
+### Validation Rules
+- At least one component required
+- All components must be **connected**
+- Strict placement constraints between components
+- Maximum of 10 blocks
 
-The compiler requirements are listed below. We strongly recommend to always use the latest compiler versions.
+Connectivity is validated using **Depth-First Search (DFS)**.
 
--   Minimum:
-    -   Windows: Visual Studio 2015 Update 3 with `Programming Languages -> Visual C++` checked when installing
-    -   Linux: `g++` version 5
-    -   macOS: `clang++` version 4
+![Spaceship Editor](assets/readme_images/validations_system.png)
+---
 
--   Recommended:
-    -   Windows: Visual Studio 2022 with `Workloads -> Desktop development with C++` checked when installing
-        -    When installing Visual Studio 2019 or later, double-check that you selected "Desktop development with C++". This should download and install approximately 8 GB of stuff from the Microsoft servers. If you installed Visual Studio and it only took several minutes, you probably missed this step
-    -   Linux: `g++` latest
-    -   macOS: `clang++` latest, by doing one of the following:
-        -   for LLVM/Clang: install [`brew`](https://brew.sh/) then run `brew install llvm`
-        -   for Apple Clang: install XCode
+## Game Mode – Breakout
 
+Once the spaceship is valid, it is **instantiated as the paddle** in a Breakout-style game.
 
-### Install an editor
+### Gameplay Mechanics
+- Ball launched at a 45° angle
+- Paddle-ball collision angle depends on impact point
+- Multi-hit bricks with different durability levels
+- Brick destruction animation
+- Score & lives system (3 lives)
 
-We recommend the following editors:
+### Controls
+| Action | Key |
+|------|-----|
+| Move Paddle | ← / → |
+| Launch Ball | SPACE |
+| Return to Editor | B |
 
--    Windows: Visual Studio (***not*** the same thing as Visual Studio Code)
--    Linux: Visual Studio Code
--    macOS: Visual Studio Code (***do not*** use Visual Studio for Mac, as it's discontinued)
+---
 
+## Collision System
 
-### Install or update your graphics drivers
+- **Ball ↔ Walls** – elastic reflection
+- **Ball ↔ Paddle** – angle adjusted based on hit position
+- **Ball ↔ Bricks** – durability reduction & destruction
+- **Ball ↔ Bottom Wall** – life lost and reset
 
-Use the following steps as a guideline. Detailed instructions differ across manufacturers and operating systems, and are ***not*** covered here.
+---
 
--   Update the drivers for your integrated graphics processor (for example, Intel Graphics XXXX)
--   Update the drivers for your dedicated graphics card, if your computer has one:
-    -   for Nvidia cards: https://www.nvidia.com/Download/index.aspx
-    -   for AMD cards: https://www.amd.com/en/support
+## Custom Geometry System
 
-Not updating your drivers may result in the project not working, or displaying a white screen.
+All objects are rendered using **procedurally generated meshes**:
+- Squares
+- Triangles
+- Circles
+- Semicircles
+- Trapezoids
+- Lines
 
+Meshes are created manually using vertex and index buffers, providing **direct OpenGL-level control**.
 
-### Check your graphics capabilities
+---
 
-Graphics capabilities are decided by the combination of your computer's hardware, drivers, and operating system.
+## Visual & UX Details
 
-This project requires OpenGL version ***3.3 core profile, or newer*** for the simpler parts, and version ***4.3 core profile, or newer***  for the more advanced parts. If you have a computer manufactured within the last few years, you should be safe. ***If you're not sure,*** follow the steps in [this guide](docs/user/checking_capabilities.md) to find out.
+- Orthographic 2D camera
+- High-DPI (Retina) scaling support
+- Smooth brick destruction animation
+- Clean UI with real-time text rendering
+- Visual feedback for interactions
 
+---
 
-### Install the third-party libraries
+## Tech Stack
 
-There are some open-source libraries that this project uses. To install them:
+- **Language:** C++
+- **Graphics API:** OpenGL
+- **Math Library:** GLM
+- **Rendering:** Custom 2D pipeline
+- **Platform:** Windows / macOS
 
--   Windows: you don't need to do anything - all necessary libraries are already provided with the code
+---
 
--   Linux: depending on your distribution, run one of the following scripts as superuser:
-    -   Debian (Ubuntu): `./tools/deps-ubuntu.sh`
-    -   Red Hat (Fedora): `./tools/deps-fedora.sh`
-    -   Arch (x86_64): `./tools/deps-arch.sh`
+## Possible Extensions
 
--   macOS: install [`brew`](https://brew.sh/) then run `./tools/deps-macos.sh`
+- Multiple balls support
+- Power-ups & abilities
+- Particle effects
+- Camera shake
+- Component-based entity system
 
+---
 
-### Install the build tools
+## Purpose
 
-This project uses [CMake][ref-cmake]. It a nutshell, CMake does not compile source code, instead it creates files that you then use to compile your code (for example, it creates a Makefile on Linux and macOS, a Visual Studio project on Windows, and so on).
-
-This project requires CMake ***3.16 or newer,*** however, as with the compilers, we strongly recommend that you use the latest version. To install it, follow these steps:
-
--   Windows:
-    1.  go to the [CMake downloads page][ref-cmake-dl]
-    2.  download the latest version of the file called `cmake-<VERSION>-windows-x86_64.msi`
-    3.  install it
-
--   Linux:
-    1.  use your package manager to install `cmake`
-    2.  check the version using `cmake --version`
-    3.  depending on the version:
-        -   if it's the minimum required (see above), you're all set
-        -   otherwise, run `./tools/install-cmake.sh && . ~/.profile` in a terminal
-
--   macOS:
-    1.  run `brew install cmake`
-
-After installation, run `cmake --version` to check that it's in your `PATH` environment variable. This should happen automatically, but if it didn't, just add it manually. Instructions on how to add an executable to your `PATH` differ across operating systems and are ***not*** covered here.
-
-
-## :gear: Building
-
-Open a terminal and go into the root folder of the project, which contains the top-level `CMakeLists.txt` file.
-Do not run CMake directly from the top-level folder (meaning, do not do this: `cmake .`). Instead, make a separate directory, as follows:
-
-1.  `mkdir build`
-2.  `cd build`
-3.  Generate the project:
-    -   for module 1 labs (default): `cmake ..`
-    -   for module 2 labs: `cmake .. -DWITH_LAB_M1=0 -DWITH_LAB_M2=1`
-    -   for extra labs: `cmake .. -DWITH_LAB_M1=0 -DWITH_LAB_EXTRA=1`
-    -   for none (`SimpleScene` only): `cmake .. -DWITH_LAB_M1=0`
-4.  Build the project:
-    -   Windows, one of the following:
-        -   `cmake --build .`
-        -   or just double-click the `.sln` file to open it in Visual Studio, then press `Ctrl+Shift+B` to build it
-    -   Linux and macOS, one of the following:
-        -   `cmake --build .`
-        -   or just `make`
-
-That's it! :tada:
-
-***Note:*** When running the CMake generation step on Windows (meaning, `cmake ..`), you may receive errors that include the phrase `Permission denied`. If you currently have the framework on the `C:` drive, for example on the Desktop, you might not have write permissions. Experimentally, we've found that this happens on single-drive devices (meaning, for example, computers with no disk partition other than `C:`). As an alternative, move the framework on the top-level (directly in `C:`) or create another drive partition (for example `D:`) and move it there.
-
-
-### Rebuilding
-
-It's very simple to rebuild:
-
--   Every time you modify source code and want to recompile, you only need to follow ***the last step*** (for example, just `make` again)
--   Every time you add/remove/rename a source code file on disk, you need to follow ***the last two steps*** (for example, just `cmake .. && make` again)
--   If something goes wrong when generating the project, just delete the contents of the `build` folder, or the folder itself, then follow all the steps again
-
-
-## :rocket: Running
-
-You can run the project from an IDE, as well as standalone, from anywhere on disk. For example:
-
--   Windows, one of the following:
-    -   `.\bin\Debug\GFXFramework`
-    -   or just open the `.sln` file in Visual Studio, then press `F5` to run it
-
--   Linux and macOS:
-    -   `./bin/Debug/GFXFramework`
-
-To run a certain lab:
-
--   Go into `main.cpp`
--   Find this line:
-    ```cpp
-    World *world = new gfxc::SimpleScene();
-    ```
--   Replace it with whatever you want to run, for example:
-    ```cpp
-    World *world = new m1::Lab1();
-    World *world = new m2::Lab1();
-    World *world = new extra::TessellationShader();
-    // etc.
-    ```
-
-
-## :book: Documentation
-
-All user and developer documentation can be found in the `docs` directory.
-
-
-## :wrench: Contributing
-
-See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more info.
-A future roadmap is ***TBD***.
-
-
-## :page_facing_up: License
-
-This project is available under the [MIT][ref-mit] license; see [LICENSE.md](LICENSE.md) for the full license text.
-This project also includes external libraries that are available under a variety of licenses; see [LEGAL.txt](LEGAL.txt)
-for the full license texts and legal notices.
-
-
-[ref-cmake]:            https://github.com/Kitware/CMake/
-[ref-cmake-dl]:         https://github.com/Kitware/CMake/releases/
-[ref-cmake-build]:      https://github.com/Kitware/CMake#building-cmake-from-scratch
-[ref-mit]:              https://opensource.org/licenses/MIT
+Developed as part of an advanced **Computer Graphics & Game Programming** curriculum, focusing on engine-level concepts and performance-aware design.
